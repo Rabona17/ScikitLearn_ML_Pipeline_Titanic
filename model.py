@@ -1,3 +1,30 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import os
+import re
+
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import mean_squared_error
+
+def param_choose(pl, titanic):
+    #Model selection with 5-fold CV and GridSearch
+    train_tit, test_tit = train_test_split(titanic, test_size=0.3)
+    pl_fitted = pl.fit(train_tit.drop('Survived', axis=1), train_tit.Survived)
+    params = {'classifier__max_depth':range(1,20)}
+    grids = GridSearchCV(pl, param_grid=params, cv=5, iid=False)
+    grids.fit(train_tit.drop('Survived', axis=1), train_tit.Survived)
+    return grids.best_params_, grids.best_score_
+
 def titanic_model(titanic):
     """
     :Example:
